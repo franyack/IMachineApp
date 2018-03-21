@@ -1,44 +1,23 @@
 package com.example.fran.imachineapp;
 
 import android.Manifest;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Build;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.JsonWriter;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.codekidlabs.storagechooser.StorageChooser;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-
 import java.io.File;
-import java.io.IOError;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-
-import static java.lang.System.out;
+import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
     TextView path_chosen;
-    Message messages;
-    JSONArray images;
-    int cont;
+    String[] imagespath;
+    String[] result;
+    Vector<String> images = new Vector<>();
+    Vector<String> vImages = new Vector<>();
+    Vector<Integer> vClusters = new Vector<>();
+
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -51,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private static final int INITIAL_REQUEST = 1337;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     public native int imgProcess(long inputMat, long imageGray);
 
+    public native String[] imgProcess2(String[] images);
+
     public void chooseGallery(View view) {
         StorageChooser chooser = new StorageChooser.Builder()
                 .withActivity(MainActivity.this)
@@ -88,79 +68,40 @@ public class MainActivity extends AppCompatActivity {
         chooser.setOnSelectListener(new StorageChooser.OnSelectListener() {
             @Override
             public void onSelect(String path) {
-              path_chosen = (TextView) findViewById(R.id.path_chosen);
+              path_chosen = findViewById(R.id.path_chosen);
               path_chosen.setText(path);
 
             }
         });
     }
 
-    private void getAllFiles(File curDir, JSONArray images){
+    private void getAllFiles(File curDir){
         File[] filesList = curDir.listFiles();
         for(File f : filesList){
             if(f.isDirectory())
-                getAllFiles(f, images);
+                getAllFiles(f);
             if(f.isFile()){
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("img"+cont,f.getPath());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                images.put(jsonObject);
-                cont++;
+                //TODO: Check if the files is an image-file
+                images.add(f.getAbsolutePath());
             }
         }
     }
 
     public void procesarImagenes(View view) {
         File curDir = new File((String) path_chosen.getText());
-        cont = 0;
-        images  = new JSONArray();
-        getAllFiles(curDir,images);
-        JSONObject imagesObj = new JSONObject();
-        try {
-            imagesObj.put("images",images);
-            writeToFile(imagesObj.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
+        getAllFiles(curDir);
+        imagespath = new String[images.size()];
+        for (int i = 0; i<images.size(); i++){
+            imagespath[i] = images.get(i);
+        }
+        result = imgProcess2(imagespath);
+        for (String s:result){
+            int positionOfCluster = s.lastIndexOf("->");
+            String image = s.substring(0,positionOfCluster);
+            Integer clust = Integer.parseInt(s.substring(positionOfCluster+2));
+            vImages.add(image);
+            vClusters.add(clust);
         }
     }
 
-    private void writeToFile(String data) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(openFileOutput("images.json", Context.MODE_PRIVATE));
-            outputStreamWriter.write(data);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-//    public void writeJson(View view){
-//        IOHelper.writeToFile(this,"images.txt", images);
-//    }
-//
-//    public void writeJsonStream(OutputStream out, List<Message> messages) throws IOException {
-//        JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-//        writer.setIndent("  ");
-//        writeMessagesArray(writer, messages);
-//        writer.close();
-//    }
-//
-//    public void writeMessagesArray(JsonWriter writer, List<Message> messages) throws IOException {
-//        writer.beginArray();
-//        for (Message message : messages) {
-//            writeMessage(writer, images);
-//        }
-//        writer.endArray();
-//    }
-//
-//    public void writeMessage(JsonWriter writer, String[] images) throws IOException {
-//        writer.beginObject();
-//        for (int i=0;i<images.length;i++){
-//            writer.name("img"+i).value(images[i]);
-//        }
-//        writer.endObject();
-//    }
 }

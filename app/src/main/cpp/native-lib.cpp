@@ -3,6 +3,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
 
+
 using namespace cv;
 using namespace std;
 
@@ -37,5 +38,87 @@ Java_com_example_fran_imachineapp_MainActivity_imgProcess(JNIEnv *env, jclass , 
     reVal = (jint)conv;
     return  reVal;
 }
+
+int GetCluster(){
+    //	srand((unsigned)time(0));
+    int i;
+    i = (rand()%10)+1;
+    return i ;
+}
+
+
+//void //jobjectArray JNICALL
+//Java_com_example_fran_imachineapp_MainActivity_imgProcess2(JNIEnv *env, jobject ,vector<String> images) {
+//    int size = images.size();
+//    for (int i=0;i<size;i++){
+//        //Hacer algo
+//    }
+//}
+//vector< tuple<String,int>> processingImages(vector<String> imagesPath){
+//    vector< tuple<String,int>> results;
+//    for (int i=0;i<imagesPath.size();i++){
+//        Mat img = imread(imagesPath[i].c_str());
+//        int conv;
+//        jint reVal;
+//        conv = toGray(img,img);
+//        reVal = (jint)conv;
+//        int cluster = GetCluster();
+//        tuple<String,int> result (imagesPath[i].c_str(),cluster);
+//        results.push_back(result);
+//    }
+//    return results;
+//};
+
+vector<String> processingImages(vector<String> imagesPath){
+    vector<String> results;
+    for (int i=0;i<imagesPath.size();i++){
+        Mat img = imread(imagesPath[i]);
+        int conv;
+        jint reVal;
+        conv = toGray(img,img);
+        reVal = (jint)conv;
+        int cluster = GetCluster();
+        stringstream ss;
+        ss<<cluster;
+        string str = ss.str();
+        String result = imagesPath[i] + "->" + str;
+        results.push_back(result);
+    }
+    return results;
+};
+
+jobjectArray //jobjectArray JNICALL
+Java_com_example_fran_imachineapp_MainActivity_imgProcess2(JNIEnv *env, jobject ,jobjectArray stringArray) {
+    int stringCount = env->GetArrayLength(stringArray);
+//    vector< tuple<String,int>> results;
+    vector<String> results;
+    vector<String> imagesPath;
+    for (int i=0; i<stringCount; i++) {
+        jstring string = (jstring) (env->GetObjectArrayElement(stringArray, i));
+        const char *rawString = env->GetStringUTFChars(string, 0);
+        imagesPath.push_back((String &&) rawString);
+        //vector<string,int> a = new vector<string,int>;
+        //a = getClusters(vector<String> imagesPath);
+        //getClusters(vector<String> imagesPath, a);
+//        int cluster = GetCluster();
+//        mMap[rawString] = cluster;
+
+        //cluster 1: 3 images
+        //cluster 2: 2 images
+    }
+    results = processingImages(imagesPath);
+    jobjectArray ret;
+
+    ret= (jobjectArray)env->NewObjectArray((int)results.size(),env->FindClass("java/lang/String"),env->NewStringUTF(""));
+
+    for (int i=0; i<results.size(); i++){
+        env->SetObjectArrayElement(ret,i,env->NewStringUTF(results[i].c_str()));
+    }
+    return(ret);
+
+}
+
+
+
 
 }

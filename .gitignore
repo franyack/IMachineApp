@@ -7,3 +7,50 @@
 /build
 /captures
 .externalNativeBuild
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+
+# Packages
+*.7z
+*.dmg
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# IDE's stuff
+*.layout
+.idea
+
+# Latex Stuff
+*.log
+*.aux
+*.out
+*.gz
+
+# Python stuff
+*.pyc
+**./*.pyc
+
+# IPython Notebook stuff
+*.egg-info
+.ipynb_checkpoints
+
+# Spark stuff
+/sparkdata
+
+# Sphinx build
+/docs/build
