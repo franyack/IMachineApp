@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
     Vector<String> images = new Vector<>();
     Vector<String> vImages = new Vector<>();
     Vector<Integer> vClusters = new Vector<>();
-
+    Vector<Integer> vClustersResult = new Vector<>();
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -81,8 +81,15 @@ public class MainActivity extends AppCompatActivity {
             if(f.isDirectory())
                 getAllFiles(f);
             if(f.isFile()){
-                //TODO: Check if the files is an image-file
-                images.add(f.getAbsolutePath());
+                if (f.getAbsolutePath().contains(".jpg") || f.getAbsolutePath().contains(".gif") || f.getAbsolutePath().contains(".bmp")
+                        || f.getAbsolutePath().contains(".jpeg") || f.getAbsolutePath().contains(".tif") || f.getAbsolutePath().contains(".tiff")
+                        || f.getAbsolutePath().contains(".png")){
+                    images.add(f.getAbsolutePath());
+                    if (images.size()==20){
+                        break;
+                    }
+                }
+
             }
         }
     }
@@ -102,6 +109,39 @@ public class MainActivity extends AppCompatActivity {
             vImages.add(image);
             vClusters.add(clust);
         }
+        obtenerClusters(vImages,vClusters);
     }
 
+    private void obtenerClusters(Vector<String> vImages, Vector<Integer> vClusters) {
+        while (!vClusters.isEmpty()) {
+            int cant = 1;
+            for (int i = 1; i < vClusters.size(); i++) {
+                if (vClusters.get(i) == null) {
+                    break;
+                }
+                if (vClusters.get(0) == vClusters.get(i)) {
+                    cant++;
+                    vClusters.remove(i);
+                }
+            }
+            vClustersResult.add(cant);
+            vClusters.remove(0);
+        }
+        mostrarResultados(vClustersResult);
+    }
+
+    private void mostrarResultados(Vector<Integer> vClustersResult) {
+        String resu="";
+        for (int i=0;i<vClustersResult.size();i++){
+            resu=resu+"\n"+"Cluster "+i+": "+vClustersResult.get(i)+" image/s";
+        }
+
+        setContentView(R.layout.results);
+        TextView res = findViewById(R.id.resultados);
+        res.setText(resu);
+    }
+
+    public void volverMainActivity(View view) {
+        setContentView(R.layout.activity_main);
+    }
 }
