@@ -75,8 +75,15 @@ vector<String> processingImages(vector<String> imagesPath){
         Mat img = imread(imagesPath[i]);
         int conv;
         jint reVal;
+        //Para devolver la imagen de manera correcta (en caso de querer rescatarla con algun proceso en java)
+        //Se debe definir de la siguiente manera:
+//        jlong imageGray;
+        //Mat& mGray = *(Mat*) imageGray;
+        //conv = toGray(mRgb,mGray);
         conv = toGray(img,img);
+        //De esta manera podriamos devolver la imagen convertida
         reVal = (jint)conv;
+        //return reVal;
         int cluster = GetCluster();
         stringstream ss;
         ss<<cluster;

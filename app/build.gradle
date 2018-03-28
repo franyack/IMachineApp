@@ -38,4 +38,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation project(':openCVLibrary310')
     compile "com.github.codekidX:storage-chooser:2.0.3"
+    compile 'com.github.GrenderG:Toasty:1.2.8'
 }

@@ -30,27 +30,40 @@
         android:text="elegir carpeta"
         android:textColor="#ffff" />
 
+    <CheckBox
+        android:id="@+id/checkTodasLasImagenes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnCarpetaProcesar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:text="Todas las imágenes"
+        android:onClick="checkBoxClick"
+        />
+
     <TextView
         android:id="@+id/path_chosen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:layout_below="@+id/btnCarpetaProcesar"
+        android:layout_below="@+id/checkTodasLasImagenes"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="40dp"
         android:text="" />
 
     <Button
         android:id="@+id/btnAceptar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/path_chosen"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:background="@color/colorAccent"
-        android:layout_marginTop="108dp"
         android:onClick="procesarImagenes"
         android:text="procesar"
         android:textColor="#ffff" />
+
+
 
 
 </RelativeLayout>

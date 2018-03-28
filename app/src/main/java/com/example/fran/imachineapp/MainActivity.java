@@ -1,14 +1,31 @@
 package com.example.fran.imachineapp;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.codekidlabs.storagechooser.StorageChooser;
+
+import org.w3c.dom.Text;
+
 import java.io.File;
+import java.util.Calendar;
 import java.util.Vector;
+
+import es.dmoral.toasty.Toasty;
+
+
+import static com.example.fran.imachineapp.R.string.processing_toast;
 
 public class MainActivity extends AppCompatActivity {
     TextView path_chosen;
@@ -18,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Vector<String> vImages = new Vector<>();
     Vector<Integer> vClusters = new Vector<>();
     Vector<Integer> vClustersResult = new Vector<>();
+    String strPath = "";
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -39,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
         }
-
     }
 
     /**
@@ -69,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSelect(String path) {
               path_chosen = findViewById(R.id.path_chosen);
+              strPath = path;
               path_chosen.setText(path);
 
             }
@@ -78,30 +96,55 @@ public class MainActivity extends AppCompatActivity {
     private void getAllFiles(File curDir){
         File[] filesList = curDir.listFiles();
         for(File f : filesList){
-            if(f.isDirectory())
+            if(f.isDirectory()) {
                 getAllFiles(f);
-            if(f.isFile()){
-                if (f.getAbsolutePath().contains(".jpg") || f.getAbsolutePath().contains(".gif") || f.getAbsolutePath().contains(".bmp")
-                        || f.getAbsolutePath().contains(".jpeg") || f.getAbsolutePath().contains(".tif") || f.getAbsolutePath().contains(".tiff")
-                        || f.getAbsolutePath().contains(".png")){
-                    images.add(f.getAbsolutePath());
-                    if (images.size()==20){
-                        break;
+            }else {
+                if(f.isFile()){
+                    if (f.getAbsolutePath().contains(".jpg") || f.getAbsolutePath().contains(".gif") || f.getAbsolutePath().contains(".bmp")
+                            || f.getAbsolutePath().contains(".jpeg") || f.getAbsolutePath().contains(".tif") || f.getAbsolutePath().contains(".tiff")
+                            || f.getAbsolutePath().contains(".png")){
+                        images.add(f.getAbsolutePath());
+                        if (images.size()==50){
+                            break;
+                        }
                     }
-                }
 
+                }
             }
         }
     }
 
     public void procesarImagenes(View view) {
-        File curDir = new File((String) path_chosen.getText());
+        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
+//        Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
+        File curDir;
+        CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
+        if (checkBox.isChecked()){
+            curDir = new File("/storage/emulated/0");
+        }else{
+            curDir = new File((String) path_chosen.getText());
+        }
+        if (images.size()>0){
+            images.clear();
+        }
         getAllFiles(curDir);
+
+        setContentView(R.layout.working);
+        TextView texto = findViewById(R.id.workingTexto);
+        String setearTexto = "Procesando " + images.size() +  " imagenes, aguarde por favor…";
+        texto.setText(setearTexto);
+
         imagespath = new String[images.size()];
         for (int i = 0; i<images.size(); i++){
             imagespath[i] = images.get(i);
         }
         result = imgProcess2(imagespath);
+        if (vImages.size()>0){
+            vImages.clear();
+        }
+        if (vClusters.size()>0){
+            vClusters.clear();
+        }
         for (String s:result){
             int positionOfCluster = s.lastIndexOf("->");
             String image = s.substring(0,positionOfCluster);
@@ -113,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void obtenerClusters(Vector<String> vImages, Vector<Integer> vClusters) {
+        if (vClustersResult.size()>0){
+            vClustersResult.clear();
+        }
         while (!vClusters.isEmpty()) {
             int cant = 1;
             for (int i = 1; i < vClusters.size(); i++) {
@@ -141,7 +187,23 @@ public class MainActivity extends AppCompatActivity {
         res.setText(resu);
     }
 
+
     public void volverMainActivity(View view) {
+        vClustersResult.clear();
         setContentView(R.layout.activity_main);
     }
+
+    public void checkBoxClick(View view) {
+        final CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
+        Button btn = findViewById(R.id.btnCarpetaProcesar);
+        TextView textView = findViewById(R.id.path_chosen);
+        if (checkBox.isChecked()){
+            btn.setEnabled(false);
+            textView.setText("");
+        }else{
+            btn.setEnabled(true);
+            textView.setText(strPath);
+        }
+    }
+
 }
