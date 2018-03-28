@@ -100,15 +100,14 @@ public class MainActivity extends AppCompatActivity {
                 getAllFiles(f);
             }else {
                 if(f.isFile()){
-                    if (f.getAbsolutePath().contains(".jpg") || f.getAbsolutePath().contains(".gif") || f.getAbsolutePath().contains(".bmp")
-                            || f.getAbsolutePath().contains(".jpeg") || f.getAbsolutePath().contains(".tif") || f.getAbsolutePath().contains(".tiff")
-                            || f.getAbsolutePath().contains(".png")){
-                        images.add(f.getAbsolutePath());
-                        if (images.size()==50){
-                            break;
-                        }
+                    if (images.size()>=50){
+                        break;
                     }
-
+                    if ((f.getAbsolutePath().contains(".jpg") || f.getAbsolutePath().contains(".gif") || f.getAbsolutePath().contains(".bmp")
+                            || f.getAbsolutePath().contains(".jpeg") || f.getAbsolutePath().contains(".tif") || f.getAbsolutePath().contains(".tiff")
+                            || f.getAbsolutePath().contains(".png")) && !f.getAbsolutePath().contains("thumbnails")){
+                        images.add(f.getAbsolutePath());
+                    }
                 }
             }
         }

@@ -102,7 +102,9 @@ Java_com_example_fran_imachineapp_MainActivity_imgProcess2(JNIEnv *env, jobject 
     vector<String> imagesPath;
     for (int i=0; i<stringCount; i++) {
         jstring string = (jstring) (env->GetObjectArrayElement(stringArray, i));
+        if (env->ExceptionCheck()) continue;
         const char *rawString = env->GetStringUTFChars(string, 0);
+        env->DeleteLocalRef(string);
         imagesPath.push_back((String &&) rawString);
         //vector<string,int> a = new vector<string,int>;
         //a = getClusters(vector<String> imagesPath);
