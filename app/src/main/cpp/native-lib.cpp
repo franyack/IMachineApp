@@ -71,6 +71,7 @@ int GetCluster(){
 
 vector<String> processingImages(vector<String> imagesPath){
     vector<String> results;
+    //TODO: buscar y hacer timers
     for (int i=0;i<imagesPath.size();i++){
         Mat img = imread(imagesPath[i]);
         int conv;

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,6 +29,7 @@ import es.dmoral.toasty.Toasty;
 import static com.example.fran.imachineapp.R.string.processing_toast;
 
 public class MainActivity extends AppCompatActivity {
+
     TextView path_chosen;
     String[] imagespath;
     String[] result;
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     if (images.size()>=50){
                         break;
                     }
+                    //TODO: lower path
                     if ((f.getAbsolutePath().contains(".jpg") || f.getAbsolutePath().contains(".gif") || f.getAbsolutePath().contains(".bmp")
                             || f.getAbsolutePath().contains(".jpeg") || f.getAbsolutePath().contains(".tif") || f.getAbsolutePath().contains(".tiff")
                             || f.getAbsolutePath().contains(".png")) && !f.getAbsolutePath().contains("thumbnails")){
@@ -112,9 +115,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    Thread thread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            //TODO: buscar syncronize
+            synchronized (MainActivity.this){
+                result = imgProcess2(imagespath);
+            }
+        }
+    });
 
     public void procesarImagenes(View view) {
-        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
+        //TODO: usar logger -> averiguar como se hace en android -> util.log
+//        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
 //        Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
         File curDir;
         CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
@@ -131,13 +144,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.working);
         TextView texto = findViewById(R.id.workingTexto);
         String setearTexto = "Procesando " + images.size() +  " imagenes, aguarde por favor…";
+        //TODO: progressBar mientras va progesando
         texto.setText(setearTexto);
 
         imagespath = new String[images.size()];
         for (int i = 0; i<images.size(); i++){
             imagespath[i] = images.get(i);
         }
-        result = imgProcess2(imagespath);
+
+        thread.run();
+//        result = imgProcess2(imagespath);
         if (vImages.size()>0){
             vImages.clear();
         }
@@ -185,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
         TextView res = findViewById(R.id.resultados);
         res.setText(resu);
     }
-
 
     public void volverMainActivity(View view) {
         vClustersResult.clear();
