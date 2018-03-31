@@ -115,20 +115,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            //TODO: buscar syncronize
-            synchronized (MainActivity.this){
-                result = imgProcess2(imagespath);
-            }
-        }
-    });
-
-    public void procesarImagenes(View view) {
-        //TODO: usar logger -> averiguar como se hace en android -> util.log
-//        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
-//        Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
+    public void prepararImagenes(){
         File curDir;
         CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
         if (checkBox.isChecked()){
@@ -140,26 +127,42 @@ public class MainActivity extends AppCompatActivity {
             images.clear();
         }
         getAllFiles(curDir);
-
         setContentView(R.layout.working);
         TextView texto = findViewById(R.id.workingTexto);
         String setearTexto = "Procesando " + images.size() +  " imagenes, aguarde por favor…";
         //TODO: progressBar mientras va progesando
         texto.setText(setearTexto);
-
         imagespath = new String[images.size()];
         for (int i = 0; i<images.size(); i++){
             imagespath[i] = images.get(i);
         }
+    }
 
-        thread.run();
-//        result = imgProcess2(imagespath);
+
+    public void procesarImagenes(View view) {
+        //TODO: usar logger -> averiguar como se hace en android -> util.log
+//        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
+//        Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
+        prepararImagenes();
+
         if (vImages.size()>0){
             vImages.clear();
         }
         if (vClusters.size()>0){
             vClusters.clear();
         }
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                //TODO: buscar syncronize
+                synchronized (MainActivity.this){
+                    result = imgProcess2(imagespath);
+                }
+            }
+        };
+        thread.start();
+        while (result == null){continue;}
         for (String s:result){
             int positionOfCluster = s.lastIndexOf("->");
             String image = s.substring(0,positionOfCluster);
