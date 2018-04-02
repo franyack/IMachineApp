@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.fran.imachineapp">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         tools:replace="android:theme"
         android:allowBackup="true"
@@ -24,5 +21,8 @@
         <activity android:name=".Working" android:noHistory="true"></activity>
         <activity android:name=".Results" android:noHistory="true"></activity>
     </application>
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

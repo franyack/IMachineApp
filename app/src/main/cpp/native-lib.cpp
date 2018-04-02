@@ -1,14 +1,11 @@
-#include <jni.h>
+#include "jni.h"
+#include "native-lib.h"
 #include <string>
 #include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
 
-
 using namespace cv;
 using namespace std;
-
-extern "C" {
-
 
 jstring
 Java_com_example_fran_imachineapp_MainActivity_stringFromJNI(
@@ -129,6 +126,3 @@ Java_com_example_fran_imachineapp_Working_imgProcess2(JNIEnv *env, jobject ,jobj
 }
 
 
-
-
-}

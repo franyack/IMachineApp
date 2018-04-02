@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.codekidlabs.storagechooser.StorageChooser;
+
 import java.io.File;
 import java.util.Vector;
 
@@ -24,12 +25,6 @@ public class MainActivity extends AppCompatActivity {
 
     String strPath = "";
 
-
-    // Used to load the 'native-lib' library on application startup.
-//    static {
-//        System.loadLibrary("native-lib");
-//        System.loadLibrary("opencv_java3");
-//    }
 
     private static final String[] INITIAL_PERMS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
