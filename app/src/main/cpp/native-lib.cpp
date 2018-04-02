@@ -96,7 +96,7 @@ vector<String> processingImages(vector<String> imagesPath){
 };
 
 jobjectArray //jobjectArray JNICALL
-Java_com_example_fran_imachineapp_MainActivity_imgProcess2(JNIEnv *env, jobject ,jobjectArray stringArray) {
+Java_com_example_fran_imachineapp_Working_imgProcess2(JNIEnv *env, jobject ,jobjectArray stringArray) {
     int stringCount = env->GetArrayLength(stringArray);
 //    vector< tuple<String,int>> results;
     vector<String> results;

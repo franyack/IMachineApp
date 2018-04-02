@@ -1,9 +1,7 @@
 package com.example.fran.imachineapp;
 
 import android.Manifest;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,39 +9,27 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.codekidlabs.storagechooser.StorageChooser;
-
-import org.w3c.dom.Text;
-
 import java.io.File;
-import java.util.Calendar;
 import java.util.Vector;
-
-import es.dmoral.toasty.Toasty;
-
-
-import static com.example.fran.imachineapp.R.string.processing_toast;
 
 public class MainActivity extends AppCompatActivity {
 
     TextView path_chosen;
     String[] imagespath;
-    String[] result;
+
     Vector<String> images = new Vector<>();
-    Vector<String> vImages = new Vector<>();
-    Vector<Integer> vClusters = new Vector<>();
-    Vector<Integer> vClustersResult = new Vector<>();
+
     String strPath = "";
-    boolean imgsProcessed;
+
+
     // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-        System.loadLibrary("opencv_java3");
-    }
+//    static {
+//        System.loadLibrary("native-lib");
+//        System.loadLibrary("opencv_java3");
+//    }
 
     private static final String[] INITIAL_PERMS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -66,11 +52,9 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
-
-    public native int imgProcess(long inputMat, long imageGray);
-
-    public native String[] imgProcess2(String[] images);
+//    public native String stringFromJNI();
+//
+//    public native int imgProcess(long inputMat, long imageGray);
 
     public void chooseGallery(View view) {
         StorageChooser chooser = new StorageChooser.Builder()
@@ -116,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     public boolean prepararImagenes(){
         File curDir;
         CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
@@ -131,11 +116,6 @@ public class MainActivity extends AppCompatActivity {
             images.clear();
         }
         getAllFiles(curDir);
-        setContentView(R.layout.working);
-        TextView texto = findViewById(R.id.workingTexto);
-        String setearTexto = "Procesando " + images.size() +  " imagenes, aguarde por favor…";
-        //TODO: progressBar mientras va progesando
-        texto.setText(setearTexto);
         imagespath = new String[images.size()];
         for (int i = 0; i<images.size(); i++){
             imagespath[i] = images.get(i);
@@ -146,79 +126,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void procesarImagenes(View view) {
         //TODO: usar logger -> averiguar como se hace en android -> util.log
-        //Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
-        //Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
-        imgsProcessed = false;
         if (!prepararImagenes()){
             Toast.makeText(getApplicationContext(),"Debe seleccionar un directorio a procesar", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (vImages.size()>0){
-            vImages.clear();
-        }
-        if (vClusters.size()>0){
-            vClusters.clear();
-        }
+//        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //TODO: buscar syncronize
-                synchronized (MainActivity.this){
-                    result = imgProcess2(imagespath);
-                    imgsProcessed = true;
-                }
-            }
-        });
-        thread.start();
-        while (!imgsProcessed){continue;} // TODO: sleep para no comer tanto procesamiento?
-        for (String s:result){
-            int positionOfCluster = s.lastIndexOf("->");
-            String image = s.substring(0,positionOfCluster);
-            Integer clust = Integer.parseInt(s.substring(positionOfCluster+2));
-            vImages.add(image);
-            vClusters.add(clust);
-        }
-        obtenerClusters(vImages,vClusters);
-
+        Intent i = new Intent(this, Working.class);
+        i.putExtra("imagesPath",imagespath);
+        i.putExtra("imagesSize", images.size());
+        startActivity(i);
     }
 
-    private void obtenerClusters(Vector<String> vImages, Vector<Integer> vClusters) {
-        if (vClustersResult.size()>0){
-            vClustersResult.clear();
-        }
-        while (!vClusters.isEmpty()) {
-            int cant = 1;
-            for (int i = 1; i < vClusters.size(); i++) {
-                if (vClusters.get(i) == null) {
-                    break;
-                }
-                if (vClusters.get(0) == vClusters.get(i)) {
-                    cant++;
-                    vClusters.remove(i);
-                }
-            }
-            vClustersResult.add(cant);
-            vClusters.remove(0);
-        }
-        mostrarResultados(vClustersResult);
-    }
-
-    private void mostrarResultados(Vector<Integer> vClustersResult) {
-        String resu="";
-        for (int i=0;i<vClustersResult.size();i++){
-            resu=resu+"\n"+"Cluster "+i+": "+vClustersResult.get(i)+" image/s";
-        }
-
-        setContentView(R.layout.results);
-        TextView res = findViewById(R.id.resultados);
-        res.setText(resu);
-    }
-
-    public void volverMainActivity(View view) {
-        vClustersResult.clear();
-        setContentView(R.layout.activity_main);
-    }
 
     public void checkBoxClick(View view) {
         final CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
