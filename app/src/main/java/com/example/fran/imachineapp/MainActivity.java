@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     Vector<Integer> vClusters = new Vector<>();
     Vector<Integer> vClustersResult = new Vector<>();
     String strPath = "";
+    boolean imgsProcessed;
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
@@ -115,9 +116,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    public void prepararImagenes(){
+    public boolean prepararImagenes(){
         File curDir;
         CheckBox checkBox = findViewById(R.id.checkTodasLasImagenes);
+        if (path_chosen == null && !checkBox.isChecked()){
+            return false;
+        }
         if (checkBox.isChecked()){
             curDir = new File("/storage/emulated/0");
         }else{
@@ -136,15 +140,19 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i<images.size(); i++){
             imagespath[i] = images.get(i);
         }
+        return true;
     }
 
 
     public void procesarImagenes(View view) {
         //TODO: usar logger -> averiguar como se hace en android -> util.log
-//        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
-//        Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
-        prepararImagenes();
-
+        //Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
+        //Toasty.info(getApplicationContext(), "Procesando las imagenes, aguerde un momento por favor...", Toast.LENGTH_L, true).show();
+        imgsProcessed = false;
+        if (!prepararImagenes()){
+            Toast.makeText(getApplicationContext(),"Debe seleccionar un directorio a procesar", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (vImages.size()>0){
             vImages.clear();
         }
@@ -152,17 +160,18 @@ public class MainActivity extends AppCompatActivity {
             vClusters.clear();
         }
 
-        Thread thread = new Thread() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 //TODO: buscar syncronize
                 synchronized (MainActivity.this){
                     result = imgProcess2(imagespath);
+                    imgsProcessed = true;
                 }
             }
-        };
+        });
         thread.start();
-        while (result == null){continue;}
+        while (!imgsProcessed){continue;} // TODO: sleep para no comer tanto procesamiento?
         for (String s:result){
             int positionOfCluster = s.lastIndexOf("->");
             String image = s.substring(0,positionOfCluster);
@@ -171,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
             vClusters.add(clust);
         }
         obtenerClusters(vImages,vClusters);
+
     }
 
     private void obtenerClusters(Vector<String> vImages, Vector<Integer> vClusters) {
