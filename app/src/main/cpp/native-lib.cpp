@@ -3,6 +3,7 @@
 #include <string>
 #include <opencv2/core.hpp>
 #include <opencv2/opencv.hpp>
+#include <android/log.h>
 
 using namespace cv;
 using namespace std;
@@ -68,17 +69,20 @@ int GetCluster(){
 
 vector<String> processingImages(vector<String> imagesPath){
     vector<String> results;
-    //TODO: buscar y hacer timers
     for (int i=0;i<imagesPath.size();i++){
+        clock_t start = clock();
         Mat img = imread(imagesPath[i]);
+        __android_log_print(ANDROID_LOG_VERBOSE, "Read image", "time = %0f ms", ((clock()-start) / (double)(CLOCKS_PER_SEC / 1000)));
         int conv;
         jint reVal;
         //Para devolver la imagen de manera correcta (en caso de querer rescatarla con algun proceso en java)
         //Se debe definir de la siguiente manera:
-//        jlong imageGray;
+        //jlong imageGray;
         //Mat& mGray = *(Mat*) imageGray;
         //conv = toGray(mRgb,mGray);
+        start = clock();
         conv = toGray(img,img);
+        __android_log_print(ANDROID_LOG_VERBOSE, "Processing image", "time = %0f ms", ((clock()-start) / (double)(CLOCKS_PER_SEC / 1000)));
         //De esta manera podriamos devolver la imagen convertida
         reVal = (jint)conv;
         //return reVal;
@@ -94,6 +98,7 @@ vector<String> processingImages(vector<String> imagesPath){
 
 jobjectArray //jobjectArray JNICALL
 Java_com_example_fran_imachineapp_Working_imgProcess2(JNIEnv *env, jobject ,jobjectArray stringArray) {
+    clock_t start = clock();
     int stringCount = env->GetArrayLength(stringArray);
 //    vector< tuple<String,int>> results;
     vector<String> results;
@@ -121,6 +126,7 @@ Java_com_example_fran_imachineapp_Working_imgProcess2(JNIEnv *env, jobject ,jobj
     for (int i=0; i<results.size(); i++){
         env->SetObjectArrayElement(ret,i,env->NewStringUTF(results[i].c_str()));
     }
+    __android_log_print(ANDROID_LOG_VERBOSE, "Process all images", "time = %0f ms", ((clock()-start) / (double)(CLOCKS_PER_SEC / 1000)));
     return(ret);
 
 }
