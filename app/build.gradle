@@ -38,6 +38,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    aaptOptions {
+        noCompress "tflite"
+        noCompress "lite"
+    }
 }
 
 dependencies {
@@ -50,4 +54,5 @@ dependencies {
     implementation project(':openCVLibrary310')
     compile "com.github.codekidX:storage-chooser:2.0.3"
     compile 'com.github.GrenderG:Toasty:1.2.8'
+    compile 'org.tensorflow:tensorflow-lite:0.1'
 }
