@@ -20,7 +20,8 @@
         android:text="TRABAJANDO..."
         android:textSize="20dp"
         tools:layout_editor_absoluteX="148dp"
-        tools:layout_editor_absoluteY="40dp" />
+        tools:layout_editor_absoluteY="40dp"
+        />
 
     <TextView
         android:id="@+id/workingTexto"

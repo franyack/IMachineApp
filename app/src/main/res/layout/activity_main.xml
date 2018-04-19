@@ -29,7 +29,7 @@
         android:onClick="chooseGallery"
         android:text="elegir carpeta"
         android:textColor="#ffff"
-        android:visibility="gone"/>
+        />
 
     <CheckBox
         android:id="@+id/checkTodasLasImagenes"

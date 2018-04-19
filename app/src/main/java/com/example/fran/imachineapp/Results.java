@@ -62,7 +62,11 @@ public class Results extends Activity {
     }
 
     public void volverMainActivity(View view) {
-        Intent i = new Intent(this, MainActivity.class);
+//        Intent i = new Intent(this, MainActivity.class);
+//        startActivity(i);
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 }

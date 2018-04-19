@@ -1,8 +1,10 @@
 package com.example.fran.imachineapp;
 
 import android.Manifest;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,13 +28,13 @@ public class MainActivity extends AppCompatActivity {
     Vector<String> images = new Vector<>();
 
     String strPath = "";
-
-    private static final String MODEL_PATH = "mobilenet_quant_v1_224.tflite";
-    private static final String LABEL_PATH = "labels.txt";
-    private static final int INPUT_SIZE = 224;
-    private Classifier classifier;
-    private Executor executor = Executors.newSingleThreadExecutor();
-    private Button btnChooseImage;
+//    private Application mClass;
+//    private static final String MODEL_PATH = "mobilenet_quant_v1_224.tflite";
+//    private static final String LABEL_PATH = "labels.txt";
+//    private static final int INPUT_SIZE = 224;
+//    private Classifier classifier;
+//    private Executor executor = Executors.newSingleThreadExecutor();
+//    private Button btnChooseImage;
     private static final String[] INITIAL_PERMS = new String[]{
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -44,63 +46,67 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+//        mClass = new Application();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
         }
-        btnChooseImage = findViewById(R.id.btnCarpetaProcesar);
+//        btnChooseImage = findViewById(R.id.btnCarpetaProcesar);
 
-        initTensorFlowAndLoadModel();
+//        initTensorFlowAndLoadModel();
     }
 
-    private void initTensorFlowAndLoadModel() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    classifier = TensorFlowImageClassifier.create(
-                            getAssets(),
-                            MODEL_PATH,
-                            LABEL_PATH,
-                            INPUT_SIZE);
-                    makeButtonVisible();
-                } catch (final Exception e) {
-                    throw new RuntimeException("Error initializing TensorFlow!", e);
-                }
-            }
-        });
-    }
+//    private void initTensorFlowAndLoadModel() {
+//        executor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    classifier = TensorFlowImageClassifier.create(
+//                            getAssets(),
+//                            MODEL_PATH,
+//                            LABEL_PATH,
+//                            INPUT_SIZE);
+//                    makeButtonVisible();
+//                } catch (final Exception e) {
+//                    throw new RuntimeException("Error initializing TensorFlow!", e);
+//                }
+//            }
+//        });
+//    }
 
-    private void makeButtonVisible() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                btnChooseImage.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(),"TensorFlow Lite Working!", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+//    private void makeButtonVisible() {
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                btnChooseImage.setVisibility(View.VISIBLE);
+//                Toast.makeText(getApplicationContext(),"TensorFlow Lite Working!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                classifier.close();
-            }
-        });
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        executor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                classifier.close();
+//            }
+//        });
+//    }
+//
+//    public Classifier getClassifier(){
+//        return classifier;
+//    }
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
@@ -184,7 +190,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 //        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
-
+//        setContentView(R.layout.working);
+//        TextView texto = findViewById(R.id.workingTexto);
+//        String setearTexto = "Procesando " + images.size() +  " imagenes, aguarde por favor…";
+//        //TODO: progressBar mientras va progesando
+//        texto.setText(setearTexto);
         Intent i = new Intent(this, Working.class);
         i.putExtra("imagesPath",imagespath);
         i.putExtra("imagesSize", images.size());
