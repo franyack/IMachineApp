@@ -45,7 +45,7 @@ public class Working extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.working);
+//        setContentView(R.layout.working);
 
         Bundle bundle = getIntent().getExtras();
         imagesPath = bundle.getStringArray("imagesPath");
@@ -75,11 +75,11 @@ public class Working extends Activity {
     @Override
     protected synchronized void onResume() {
         super.onResume();
-        setContentView(R.layout.working);
-        TextView texto = findViewById(R.id.workingTexto);
-        String setearTexto = "Procesando " + numberImages +  " imagenes, aguarde por favor…";
-        //TODO: progressBar mientras va progesando
-        texto.setText(setearTexto);
+//        setContentView(R.layout.working);
+//        TextView texto = findViewById(R.id.workingTexto);
+//        String setearTexto = "Procesando " + numberImages +  " imagenes, aguarde por favor…";
+//        //TODO: progressBar mientras va progesando
+//        texto.setText(setearTexto);
     }
 //
 //    @Override
