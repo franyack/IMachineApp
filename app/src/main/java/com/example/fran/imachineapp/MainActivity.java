@@ -121,7 +121,8 @@ public class MainActivity extends AppCompatActivity {
     public void alert(){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Atención!");
-        builder.setMessage("Este proceso puede ocasionar que su pantalla se ponga en negro durante unos segundos");
+        builder.setIcon(R.drawable.warning_black);
+        builder.setMessage("Este proceso puede ocasionar que su pantalla se ponga en negro durante unos segundos.\n\nAguarde por favor.");
        final AlertDialog dialog = builder.create();
        dialog.show();
        Window window = dialog.getWindow();
