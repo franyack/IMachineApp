@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 getAllFiles(f);
             }else {
                 if(f.isFile()){
-                    if (images.size()>=50){
+                    if (images.size()>=4){
                         break;
                     }
                     //TODO: lower path
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle("Atención!");
         builder.setIcon(R.drawable.warning_black);
-        builder.setMessage("Este proceso puede ocasionar que su pantalla se ponga en negro durante unos segundos.\n\nAguarde por favor.");
+        builder.setMessage("Este proceso puede ocasionar que la pantalla se ponga en negro durante unos segundos.\n\nAguarde por favor.");
        final AlertDialog dialog = builder.create();
        dialog.show();
        Window window = dialog.getWindow();

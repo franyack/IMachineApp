@@ -26,10 +26,10 @@ import java.util.PriorityQueue;
 
 public class TensorFlowImageClassifier implements Classifier {
 
-    private static final int MAX_RESULTS = 3;
+    private static final int MAX_RESULTS = 5;
     private static final int BATCH_SIZE = 1;
     private static final int PIXEL_SIZE = 3;
-    private static final float THRESHOLD = 0.1f;
+    private static final float THRESHOLD = 0.05f;
 
     private Interpreter interpreter;
     private int inputSize;
@@ -75,7 +75,7 @@ public class TensorFlowImageClassifier implements Classifier {
         return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
     }
 
-    private List<String> loadLabelList(AssetManager assetManager, String labelPath) throws IOException {
+    public static List<String> loadLabelList(AssetManager assetManager, String labelPath) throws IOException {
         List<String> labelList = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new InputStreamReader(assetManager.open(labelPath)));
         String line;

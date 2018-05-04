@@ -55,4 +55,6 @@ dependencies {
     compile "com.github.codekidX:storage-chooser:2.0.3"
     compile 'com.github.GrenderG:Toasty:1.2.8'
     compile 'org.tensorflow:tensorflow-lite:0.1'
+    compile 'org.apache.commons:commons-math3:3.6.1'
+
 }
