@@ -34,8 +34,9 @@ public class Results extends Activity {
         if (vClustersResult.size()>0){
             vClustersResult.clear();
         }
+        int cant;
         while (!vClusters.isEmpty()) {
-            int cant = 1;
+            cant = 1;
             for (int i = 1; i < vClusters.size(); i++) {
                 if (vClusters.get(i) == null) {
                     break;
@@ -43,6 +44,7 @@ public class Results extends Activity {
                 if (vClusters.get(0) == vClusters.get(i)) {
                     cant++;
                     vClusters.remove(i);
+                    i -= 1;
                 }
             }
             vClustersResult.add(cant);

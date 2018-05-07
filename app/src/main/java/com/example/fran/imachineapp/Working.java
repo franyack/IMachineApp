@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.ejml.data.DMatrixRMaj;
 import org.opencv.core.Mat;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 public class Working extends Activity {
 
     private static final String MODEL_PATH = "mobilenet_quant_v1_224.tflite";
-    private static final String LABEL_PATH = "labels.txt";
+    private static final String LABEL_PATH = "labels2.txt";
     private static final String WORDS_PATH = "words.txt";
     private static final String HIERARCHY_PATH = "wordnet.is_a.txt";
     private static final int INPUT_SIZE = 224;
@@ -225,17 +226,47 @@ public class Working extends Activity {
             top_predictions.add(new Top_Predictions(imagesPath[i], wnIdPredictionsList));
 
 
-            int randomNum = ThreadLocalRandom.current().nextInt(1,11);
-            result[i] = results.toString() + "->" + randomNum;
+//            int randomNum = ThreadLocalRandom.current().nextInt(1,11);
+//            result[i] = results.toString() + "->" + randomNum;
         }
         g_aff_matrix = get_grammatical_affinity(top_predictions);
+
+        DMatrixRMaj cluster_matrix = new DMatrixRMaj(g_aff_matrix);
+
+        int maxIt = 100;
+        int expPow = 2;
+        int infPow = 2;
+        double epsConvergence = 1e-3;
+        double threshPrune = 0.01;
+        int n = 100;
+        int seed = 1234;
+
+        MCLDenseEJML mcl = new MCLDenseEJML(maxIt, expPow, infPow, epsConvergence, threshPrune);
+
+
+        cluster_matrix = mcl.run(cluster_matrix);
+
+        ArrayList<ArrayList<Integer>> clusters = mcl.getClusters(cluster_matrix);
+
+
 //        while (!imgsProcessed){continue;} // TODO: sleep para no comer tanto procesamiento?
-        for (String s:result){
-            int positionOfCluster = s.lastIndexOf("->");
-            String image = s.substring(0,positionOfCluster);
-            Integer clust = Integer.parseInt(s.substring(positionOfCluster+2));
-            vImages.add(image);
-            vClusters.add(clust);
+//        for (String s:result){
+//            int positionOfCluster = s.lastIndexOf("->");
+//            String image = s.substring(0,positionOfCluster);
+//            Integer clust = Integer.parseInt(s.substring(positionOfCluster+2));
+//            vImages.add(image);
+//            vClusters.add(clust);
+//        }
+        for (int i=0;i<imagesPath.length;i++){
+            vImages.add(imagesPath[i]);
+            for (int j=0;j<clusters.size();j++){
+                for (int k=0;k<clusters.get(j).size();k++){
+                    if(clusters.get(j).get(k) == i){
+                        vClusters.add(j);
+                        break;
+                    }
+                }
+            }
         }
         Intent i = new Intent(this, Results.class);
         i.putExtra("vImages",vImages);
@@ -246,10 +277,11 @@ public class Working extends Activity {
     private double[][] get_grammatical_affinity(List<Top_Predictions> top_predictions) {
         double[][] result = new double[top_predictions.size()][top_predictions.size()];
         List<String> dictionary = new ArrayList<>();
-        boolean add = true;
+        boolean add;
         int d;
         for (int i=0;i<top_predictions.size();i++){
             for (int j=0; j<top_predictions.get(i).getResult().size();j++){
+               add=true;
                if(dictionary.size() == 0){
                    dictionary.add(top_predictions.get(i).getResult().get(j).getWnId());
                }else{

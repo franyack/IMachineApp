@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 getAllFiles(f);
             }else {
                 if(f.isFile()){
-                    if (images.size()>=4){
+                    if (images.size()>=50){
                         break;
                     }
                     //TODO: lower path
