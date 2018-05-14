@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.design.widget.BottomSheetDialog;
@@ -22,7 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.codekidlabs.storagechooser.StorageChooser;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -49,6 +53,15 @@ public class MainActivity extends AppCompatActivity {
 //        mClass = new Application();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
+        }
+        File folder = new File(Environment.getExternalStorageDirectory() +
+                File.separator + "clusterResult");
+        if (folder.exists()){
+            try {
+                FileUtils.deleteDirectory(folder);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -149,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Debe seleccionar un directorio a procesar", Toast.LENGTH_SHORT).show();
             return;
         }
-
 //        Toast.makeText(getApplicationContext(),R.string.processing_toast, Toast.LENGTH_LONG).show();
         alert();
         setContentView(R.layout.working);

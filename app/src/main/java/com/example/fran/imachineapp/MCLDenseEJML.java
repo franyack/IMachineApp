@@ -45,15 +45,31 @@ public class MCLDenseEJML {
     public void normalize(DMatrixRMaj M) {
         // TODO: similar method that returns a matrix, avoiding modifications on the given one
         // TODO: handle division by zero when having rows with all zeros
+        double suma=0;
         Equation eq = new Equation();
         eq.alias(M, "M");
+        eq.alias(suma,"s");
 
+//        for (int i=0;i<M.numRows;i++) {
+//            for (int j = 0; j < M.numCols; j++) {
+//                eq.alias(i, "i");
+//                eq.alias(j, "j");
+//                eq.process("s = s + M(i,j)");
+////                suma = suma + M.get(i,j);
+//            }
+//        }
+//        for (int i=0;i<M.numRows;i++){
+//            for (int j=0;j<M.numCols;j++){
+////                eq.alias(i,"i");
+////                eq.alias(j,"j");
+////                eq.process("s = s + M(i,j)");
+//                M.set(i,j,M.get(i,j)/suma);
+//            }
         for(int i=0; i < M.numRows; i++){
             eq.alias(i, "i");
             eq.process("M(i,:) = M(i,:) / sum(M(i,:))");
-
+//            eq.process("M(i,:) = M(i,:) / s");
         }
-
     }
 
     public void normalizeF(DMatrixRMaj M) {

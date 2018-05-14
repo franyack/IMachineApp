@@ -377,16 +377,16 @@ public class Working extends Activity {
 
         for (int i=1; i<predictions.size();i++){
             int d = 0;
-            boolean add = false;
+            boolean add = true;
             while (d<result.size()){
                if(predictions.get(i).getWnId().equals(result.get(d).getWnId())){
                    result.get(d).setPrediction(result.get(d).getPrediction()+predictions.get(i).getPrediction());
-                   add = true;
+                   add = false;
                    break;
                }
                d+=1;
             }
-            if(!add){
+            if(add){
                 result.add(new wnIdPredictions(predictions.get(i).getWnId(),predictions.get(i).getPrediction()));
             }
         }

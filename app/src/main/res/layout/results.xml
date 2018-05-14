@@ -33,12 +33,23 @@
        />
 
     <Button
+        android:id="@+id/generarCarpetas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="66dp"
+        android:background="@color/colorAccent"
+        android:onClick="generarCarpetas"
+        android:text="Generar carpetas"
+        android:textColor="#ffff" />
+
+    <Button
         android:id="@+id/volver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="12dp"
         android:background="@color/colorAccent"
         android:onClick="volverMainActivity"
         android:text="Volver"
